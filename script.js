@@ -1,99 +1,101 @@
-const squeegeeOptions = [
-    { value: "flexy-flat", label: "Flexy Flat (120-140 sq ft/gal)", range: [200, 225] },
-    { value: "stiff-flat", label: "Stiff Flat (100-120 sq ft/gal)", range: [200, 250] },
-    { value: "8-12-mils", label: "8-12 mils (133-200 sq ft/gal)", range: [133, 200] },
-    { value: "15-20-mils", label: "15-20 mils (80-106 sq ft/gal)", range: [80, 106] },
-];
+const squeegeeTypes = {
+    "Stiff Flat (200-300 sq ft/gal)": [200, 300],
+    "Flexy Flat (150-175 sq ft/gal)": [150, 175],
+    "8-12 mils (133-200 sq ft/gal)": [133, 200],
+    "15-20 mils (80-106 sq ft/gal)": [80, 106]
+};
 
-function toggleFlakeOptions() {
-    const floorType = document.getElementById("floor-type").value;
-    const flakeOptionsDiv = document.getElementById("flake-options");
+const calculateBtn = document.getElementById('calculateBtn');
+const resetBtn = document.getElementById('resetBtn');
+const squeegeeInputs = document.getElementById('squeegeeInputs');
+const results = document.getElementById('results');
+const flakeInputSection = document.getElementById('flakeInputSection');
+const floorTypeSelect = document.getElementById('floorType');
+
+document.getElementById('numCoats').addEventListener('input', function () {
+    // Set the number of coats to 1 if less than 1 is entered
+    const numCoats = Math.max(1, parseInt(this.value) || 1);
+    this.value = numCoats; // Ensure the input field stays at least 1
+
+    // Clear previous selections
+    squeegeeInputs.innerHTML = ''; 
+
+    // Always add at least one squeegee type input
+    for (let i = 1; i <= numCoats; i++) {
+        squeegeeInputs.innerHTML += `
+            <label for="coat${i}">Squeegee Type for Coat ${i}:</label>
+            <select id="coat${i}" class="calculator-select" required>
+                ${Object.keys(squeegeeTypes).map(type => `<option value="${type}">${type}</option>`).join('')}
+            </select>
+        `;
+    }
+});
+
+// Initial population of squeegee input for 1 coat (when the page loads)
+document.addEventListener('DOMContentLoaded', function () {
+    const numCoats = 1;  // Default to 1 coat
+    for (let i = 1; i <= numCoats; i++) {
+        squeegeeInputs.innerHTML += `
+            <label for="coat${i}">Squeegee Type for Coat ${i}:</label>
+            <select id="coat${i}" class="calculator-select" required>
+                ${Object.keys(squeegeeTypes).map(type => `<option value="${type}">${type}</option>`).join('')}
+            </select>
+        `;
+    }
+});
+
+
+floorTypeSelect.addEventListener('change', function() {
+    if (this.value === 'flake') {
+        flakeInputSection.style.display = 'block';
+    } else {
+        flakeInputSection.style.display = 'none';
+    }
+});
+
+calculateBtn.addEventListener('click', () => {
+    const floorSize = parseFloat(document.getElementById('floorSize').value);
+    const numCoats = parseInt(document.getElementById('numCoats').value);
+    const floorType = document.getElementById('floorType').value;
+    const flakeCoverage = parseFloat(document.getElementById('flakeCoverage').value);
+
+    if (!floorSize || floorSize <= 0 || !numCoats || numCoats <= 0 || !floorType || (floorType === "flake" && flakeCoverage <= 0)) {
+        alert('Please fill in all required fields with valid values.');
+        return;
+    }
+
+    let totalMinEpoxy = 0;
+    let totalMaxEpoxy = 0;
+
+    for (let i = 1; i <= numCoats; i++) {
+        const squeegeeType = document.getElementById(`coat${i}`).value;
+        const [minCoverage, maxCoverage] = squeegeeTypes[squeegeeType];
+        totalMinEpoxy += floorSize / maxCoverage;
+        totalMaxEpoxy += floorSize / minCoverage;
+    }
+
+    const epoxyGallonsMin = totalMinEpoxy.toFixed(2);
+    const epoxyGallonsMax = totalMaxEpoxy.toFixed(2);
+    const epoxyLitresMin = (totalMinEpoxy * 3.785).toFixed(2);
+    const epoxyLitresMax = (totalMaxEpoxy * 3.785).toFixed(2);
+    let flakeBoxes = 0;
 
     if (floorType === "flake") {
-        flakeOptionsDiv.style.display = "block";
-    } else {
-        flakeOptionsDiv.style.display = "none";
-    }
-}
-
-function generateCoatFields() {
-    const coats = parseInt(document.getElementById("coats").value) || 0;
-    const floorType = document.getElementById("floor-type").value;
-    const coatFieldsDiv = document.getElementById("coat-fields");
-    coatFieldsDiv.innerHTML = ""; // Clear existing fields
-
-    for (let i = 1; i <= coats; i++) {
-        const label = document.createElement("label");
-        label.textContent = `Squeegee for Coat ${i}:`;
-
-        const select = document.createElement("select");
-        select.id = `tool-type-coat-${i}`;
-        squeegeeOptions.forEach(option => {
-            const opt = document.createElement("option");
-            opt.value = option.value;
-            opt.textContent = option.label;
-            opt.dataset.rangeMin = option.range[0];
-            opt.dataset.rangeMax = option.range[1];
-            select.appendChild(opt);
-        });
-
-        const flakeLabel = document.createElement("label");
-        flakeLabel.textContent = `Flake on Coat ${i}?`;
-        flakeLabel.className = "flake-option";
-
-        const flakeCheckbox = document.createElement("input");
-        flakeCheckbox.type = "checkbox";
-        flakeCheckbox.id = `flake-coat-${i}`;
-        flakeCheckbox.className = "flake-option";
-
-        // If floor type is "solid" and coats > 0, hide the flake option
-        if (floorType === "solid") {
-            flakeLabel.style.display = "none";
-            flakeCheckbox.style.display = "none";
-        }
-
-        // Append elements to coat fields div
-        coatFieldsDiv.appendChild(label);
-        coatFieldsDiv.appendChild(select);
-        coatFieldsDiv.appendChild(flakeLabel);
-        coatFieldsDiv.appendChild(flakeCheckbox);
+        const flakePerBox = 40; // lbs per box
+        flakeBoxes = Math.ceil((floorSize * flakeCoverage) / flakePerBox);
     }
 
-    toggleFlakeOptions();
-}
+    results.innerHTML = `
+        <p><strong>Results:</strong></p>
+        <p>Total Epoxy: ${epoxyGallonsMin} - ${epoxyGallonsMax} gallons (${epoxyLitresMin} - ${epoxyLitresMax} litres)</p>
+        ${flakeBoxes > 0 ? `<p>Boxes of Flake: ${flakeBoxes} boxes</p>` : ''}
+    `;
+});
 
-function calculateEpoxy() {
-    // Get input values
-    const floorSize = parseFloat(document.getElementById('floor-size').value);
-    const floorType = document.getElementById('floor-type').value;
-    const coats = parseInt(document.getElementById('coats').value);
-    const flakeRate = parseFloat(document.getElementById('flake-rate').value) || 0.25;
-
-    // Epoxy coverage (assumed average coverage)
-    const epoxyCoverage = 150; // coverage in sq ft per gallon for solid epoxy
-    const flakeCoverage = 100; // coverage in sq ft per lb for flakes (adjust based on your needs)
-
-    // Calculate the epoxy required (gallons)
-    const epoxyGallons = (floorSize * coats) / epoxyCoverage;
-
-    // Calculate the flake required (lbs)
-    const flakePounds = floorSize * coats * flakeRate;
-
-    // Convert to liters (1 gallon = 3.78541 liters)
-    const epoxyLiters = epoxyGallons * 3.78541;
-    const flakeLiters = flakePounds * 3.78541 / 8.34; // Assuming flake density of 8.34 lbs per gallon (adjust if necessary)
-
-    // Display results
-    document.getElementById('epoxy-gallons').innerText = `Epoxy Required: ${epoxyGallons.toFixed(2)} Gallons`;
-    document.getElementById('epoxy-liters').innerText = `Epoxy Required: ${epoxyLiters.toFixed(2)} Liters`;
-    document.getElementById('flake-gallons').innerText = `Flake Required: ${flakePounds.toFixed(2)} Pounds`;
-    document.getElementById('flake-liters').innerText = `Flake Required: ${flakeLiters.toFixed(2)} Liters`;
-
-    // Show result
-    document.getElementById('result').style.display = 'block';
-}
-
-
-// Set default number of coats to 0
-document.getElementById("coats").value = 0;
-toggleFlakeOptions(); // Hide the flake options by default for solid epoxy
+// Reset functionality
+resetBtn.addEventListener('click', () => {
+    document.getElementById('epoxyCalculator').reset();
+    squeegeeInputs.innerHTML = '';
+    flakeInputSection.style.display = 'none';
+    results.innerHTML = '';
+});

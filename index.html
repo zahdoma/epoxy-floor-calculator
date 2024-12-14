@@ -4,156 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Epoxy Floor Calculator</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        h1 {
-            text-align: center;
-        }
-        label {
-            display: block;
-            margin: 10px 0 5px;
-        }
-        input, select, button {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-        }
-        button {
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .output {
-            margin-top: 20px;
-            padding: 10px;
-            background: #f9f9f9;
-            border: 1px solid #ddd;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
-    <div class="container">
-        <h1>Epoxy Floor Calculator</h1>
-        <form id="calculator">
-            <label for="floorSize">Floor Size (sq ft):</label>
-            <input type="number" id="floorSize" placeholder="Enter floor size in sq ft" required>
+    <div class="calculator-container">
+        <h1 class="calculator-title">Epoxy Floor Calculator</h1>
+        <form id="epoxyCalculator" class="calculator-form">
+            <label for="floorSize" class="calculator-label">Floor Size (sq ft):</label>
+            <input type="number" id="floorSize" class="calculator-input" min="1" placeholder="Enter floor size..." required title="Enter the total floor area in square feet.">
 
-            <label for="numCoats">Number of Coats:</label>
-            <input type="number" id="numCoats" placeholder="Enter number of coats" required>
+            <label for="numCoats" class="calculator-label">Number of Coats:</label>
+            <input type="number" id="numCoats" class="calculator-input" min="1" value="1" placeholder="Enter number of coats..." required title="Enter how many coats you plan to apply.">            
 
-            <label for="floorType">Floor Type:</label>
-            <select id="floorType">
-                <option value="solid">Solid Epoxy</option>
-                <option value="flake">Flake Epoxy</option>
+            <div id="squeegeeInputs"></div>
+
+            <label for="floorType" class="calculator-label">Floor Type:</label>
+            <select id="floorType" class="calculator-select" required title="Select the type of floor you are applying the epoxy to.">
+                <option value="solid">Solid Color</option>
+                <option value="flake">Flake Floor</option>
             </select>
 
-            <div id="flakeOptions" style="display: none;">
-                <label for="flakeAmount">Amount of Flake (lbs per sq ft):</label>
-                <input type="number" id="flakeAmount" placeholder="Enter lbs of flake per sq ft">
+            <div id="flakeInputSection" style="display: none;">
+                <label for="flakeCoverage" class="calculator-label">Flake Coverage (lbs per sq ft):</label>
+                <input type="number" id="flakeCoverage" class="calculator-input" step="0.01" min="0" value="0.16" placeholder="Enter flake coverage" title="Enter the coverage amount for flakes per square foot.">
             </div>
 
-            <div id="coatDetails"></div>
-
-            <button type="button" id="calculateBtn">Calculate</button>
+            <button type="button" id="calculateBtn" class="calculator-button">Calculate</button>
+            <button type="button" id="resetBtn" class="calculator-button reset">Reset</button>
         </form>
 
-        <div class="output" id="output"></div>
+        <div class="calculator-results" id="results"></div>
     </div>
 
-    <script>
-        const floorType = document.getElementById('floorType');
-        const flakeOptions = document.getElementById('flakeOptions');
-        const calculateBtn = document.getElementById('calculateBtn');
-        const output = document.getElementById('output');
-        const numCoatsInput = document.getElementById('numCoats');
-        const coatDetails = document.getElementById('coatDetails');
-
-        // Toggle flake options visibility
-        floorType.addEventListener('change', () => {
-            if (floorType.value === 'flake') {
-                flakeOptions.style.display = 'block';
-            } else {
-                flakeOptions.style.display = 'none';
-            }
-        });
-
-        // Update squeegee options for each coat dynamically
-        numCoatsInput.addEventListener('input', () => {
-            const numCoats = parseInt(numCoatsInput.value);
-            coatDetails.innerHTML = '';
-
-            if (isNaN(numCoats) || numCoats < 1) {
-                return;
-            }
-
-            for (let i = 1; i <= numCoats; i++) {
-                const coatDiv = document.createElement('div');
-                coatDiv.innerHTML = `
-                    <label for="squeegeeType${i}">Squeegee Type for Coat ${i}:</label>
-                    <select id="squeegeeType${i}" class="squeegeeType">
-                        <option value="flexyFlat">Flexy Flat (200-300 sq ft/gal)</option>
-                        <option value="stiffFlat">Stiff Flat (200-300 sq ft/gal)</option>
-                        <option value="mil8to12">8-12 mils (133-200 sq ft/gal)</option>
-                        <option value="mil15to20">15-20 mils (80-106 sq ft/gal)</option>
-                    </select>
-                `;
-                coatDetails.appendChild(coatDiv);
-            }
-        });
-
-        calculateBtn.addEventListener('click', () => {
-            const floorSize = parseFloat(document.getElementById('floorSize').value);
-            const numCoats = parseInt(document.getElementById('numCoats').value);
-            const flakeAmount = parseFloat(document.getElementById('flakeAmount').value || 0);
-
-            if (isNaN(floorSize) || isNaN(numCoats)) {
-                output.textContent = 'Please enter valid inputs for floor size and number of coats.';
-                return;
-            }
-
-            // Squeegee coverage map
-            const squeegeeCoverage = {
-                flexyFlat: [200, 300],
-                stiffFlat: [200, 300],
-                mil8to12: [133, 200],
-                mil15to20: [80, 106]
-            };
-
-            let totalEpoxyNeeded = 0;
-
-            for (let i = 1; i <= numCoats; i++) {
-                const squeegeeType = document.getElementById(`squeegeeType${i}`).value;
-                const [minCoverage, maxCoverage] = squeegeeCoverage[squeegeeType];
-                const avgCoverage = (minCoverage + maxCoverage) / 2;
-                totalEpoxyNeeded += floorSize / avgCoverage;
-            }
-
-            const totalEpoxyLiters = totalEpoxyNeeded * 3.785;
-
-            // Calculate flake boxes if flake floor is selected
-            let flakeBoxes = 0;
-            if (floorType.value === 'flake' && flakeAmount > 0) {
-                const totalFlakeLbs = floorSize * flakeAmount;
-                flakeBoxes = Math.ceil(totalFlakeLbs / 40);
-            }
-
-            // Display output
-            output.innerHTML = `
-                <p>Total Epoxy Needed: ${totalEpoxyNeeded.toFixed(2)} gallons (${totalEpoxyLiters.toFixed(2)} liters)</p>
-                ${flakeBoxes > 0 ? `<p>Boxes of Flake Needed: ${flakeBoxes}</p>` : ''}
-            `;
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
