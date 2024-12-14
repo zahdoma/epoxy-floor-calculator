@@ -1,3 +1,4 @@
+/* General Styles */
 * {
     box-sizing: border-box;
 }
@@ -17,7 +18,20 @@ body {
     margin-bottom: 10px;
 }
 
-/* MAIN BOX */
+/* Logo Section */
+.title-logo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.logo {
+    max-width: 400px;
+}
+
+/* Main Calculator Box */
 .calculator-container {
     background-color: #f7f7f7;
     border: 4px solid #717171;
@@ -27,31 +41,32 @@ body {
     max-width: 600px;
 }
 
-/* INPUTS BOX */
+/* Form Section */
 .calculator-form {
     display: flex;
     flex-direction: column;
     padding: 5px;
 }
 
-/* TITLE */
+/* Calculator Title */
 .calculator-title {
-    font-size: 2em;
-    margin-top: 0px;
-    margin-bottom: 20px;
+    font-size: 1.3em;
+    margin-top: 20px;
+    margin-bottom: 0px;
     color: #717171;
     text-align: center;
 }
 
-/* BOX TITLE */
+/* Input Labels */
 .calculator-label {
     font-size: 1rem;
+    font-weight: 700;
     text-align: left;
     margin-bottom: 5px;
     color: #717171;
 }
 
-/* INPUT BOXES */
+/* Input Fields */
 .calculator-input, .calculator-select {
     margin-bottom: 10px;
     padding: 10px;
@@ -67,11 +82,12 @@ body {
     outline: none;
 }
 
+/* Flake Input Section */
 #flakeInputSection {
     margin-bottom: 10px;
 }
 
-#flakeInputSection label{
+#flakeInputSection label {
     margin-bottom: 5px;
 }
 
@@ -79,7 +95,7 @@ body {
     margin-bottom: 0px;
 }
 
-/* CALCULATE BUTTON */
+/* Calculate Button */
 .calculator-button {
     background-color: #e37263;
     color: #fff;
@@ -96,7 +112,7 @@ body {
     background-color: #c6726c;
 }
 
-/* RESULTS */
+/* Results Section */
 .calculator-results {
     font-size: 1.3rem;
     margin-top: 15px;
@@ -109,6 +125,7 @@ body {
     margin-bottom: 0px;
 }
 
+/* Responsive Styles */
 @media (max-width: 600px) {
     .calculator-container {
         padding: 25px;
