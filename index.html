@@ -13,31 +13,34 @@
 
         <h1 class="calculator-title">Epoxy Floor Calculator</h1>
         
-        <form id="epoxyCalculator" class="calculator-form">
-            <label for="floorSize" class="calculator-label">Floor Size (sq ft):</label>
-            <input type="number" id="floorSize" class="calculator-input" min="1" placeholder="Enter floor size..." required title="Enter the total floor area in square feet.">
+        <hr id="divider">
 
-            <label for="numCoats" class="calculator-label">Number of Coats:</label>
-            <input type="number" id="numCoats" class="calculator-input" min="1" value="1" placeholder="Enter number of coats..." required title="Enter how many coats you plan to apply.">            
-
-            <div id="squeegeeInputs"></div>
-
+        <form class="calculator-form">
             <label for="floorType" class="calculator-label">Floor Type:</label>
-            <select id="floorType" class="calculator-select" required title="Select the type of floor you are applying the epoxy to.">
+            <select id="floorType" class="calculator-select">
                 <option value="solid">Solid Color</option>
                 <option value="flake">Flake Floor</option>
             </select>
 
+            <label for="floorSize" class="calculator-label">Floor Size (sq ft):</label>
+            <input type="number" id="floorSize" class="calculator-input" min="1" placeholder="Enter floor size...">
+
+            <label for="numCoats" class="calculator-label">Number of Coats:</label>
+            <input type="number" id="numCoats" class="calculator-input" min="1" value="1" placeholder="Enter number of coats...">            
+
+            <label for="numCoats" class="calculator-label">Squeegee(s) used:</label>
+            <div id="squeegeeInputs"></div>
+
             <div id="flakeInputSection" style="display: none;">
-                <label for="flakeCoverage" class="calculator-label">Flake Coverage (lbs per sq ft):</label>
-                <input type="number" id="flakeCoverage" class="calculator-input" step="0.01" min="0" value="0.2" placeholder="Enter flake coverage" title="Enter the coverage amount for flakes per square foot.">
+                <label>Flake (lbs/sq ft):</label>
+                <input type="number" id="flakeCoverage" class="calculator-input" step="0.01" min="0" value="0.2" placeholder="Enter flake coverage">
             </div>
 
             <button type="button" id="calculateBtn" class="calculator-button">Calculate</button>
-            <button type="button" id="resetBtn" class="calculator-button reset">Reset</button>
+            
+            <div class="calculator-results" id="results"></div>
         </form>
 
-        <div class="calculator-results" id="results"></div>
     </div>
 
     <script src="script.js"></script>

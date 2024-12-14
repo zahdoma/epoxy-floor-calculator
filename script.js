@@ -6,7 +6,6 @@ const squeegeeTypes = {
 };
 
 const calculateBtn = document.getElementById('calculateBtn');
-const resetBtn = document.getElementById('resetBtn');
 const squeegeeInputs = document.getElementById('squeegeeInputs');
 const results = document.getElementById('results');
 const flakeInputSection = document.getElementById('flakeInputSection');
@@ -88,12 +87,4 @@ calculateBtn.addEventListener('click', () => {
         <p>Total Epoxy: ${epoxyGallonsMin} - ${epoxyGallonsMax} gallons (${epoxyLitresMin} - ${epoxyLitresMax} litres)</p>
         ${flakeBoxes > 0 ? `<p>Boxes of Flake: ${flakeBoxes} boxes</p>` : ''}
     `;
-});
-
-// Reset functionality
-resetBtn.addEventListener('click', () => {
-    document.getElementById('epoxyCalculator').reset();
-    squeegeeInputs.innerHTML = '';
-    flakeInputSection.style.display = 'none';
-    results.innerHTML = '';
 });
