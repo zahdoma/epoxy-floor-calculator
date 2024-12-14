@@ -136,9 +136,3 @@ body {
         padding: 25px;
     }
 }
-
-input[type="number"] {
-    -webkit-appearance: textfield; /* Ensures compatibility on Safari/iOS */
-    appearance: textfield; /* Cross-browser compatibility */
-}
-

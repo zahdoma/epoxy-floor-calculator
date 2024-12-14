@@ -12,7 +12,10 @@ const flakeInputSection = document.getElementById('flakeInputSection');
 const floorTypeSelect = document.getElementById('floorType');
 
 document.getElementById('numCoats').addEventListener('input', function () {
-    // Set the number of coats to 1 if less than 1 is entered
+    if (this.value === '') {
+        // Allow the user to temporarily clear the input
+        return;
+    }
     const numCoats = Math.max(1, parseInt(this.value) || 1);
     this.value = numCoats; // Ensure the input field stays at least 1
 
