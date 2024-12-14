@@ -85,6 +85,6 @@ calculateBtn.addEventListener('click', () => {
     results.innerHTML = `
         <p><strong>Results:</strong></p>
         <p>Total Epoxy: ${epoxyGallonsMin} - ${epoxyGallonsMax} gallons (${epoxyLitresMin} - ${epoxyLitresMax} litres)</p>
-        ${flakeBoxes > 0 ? `<p>Boxes of Flake: ${flakeBoxes} boxes</p>` : ''}
+        ${flakeBoxes > 0 ? `<p>Total Flake: ${flakeBoxes} Boxes (40lb each)</p>` : ''}
     `;
 });
