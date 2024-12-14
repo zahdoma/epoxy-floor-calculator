@@ -28,9 +28,8 @@ body {
 }
 
 .logo {
-    max-width: 400px;
-    height: 110;
-    width: 100%;
+    max-width: 100%;
+    height: auto;
 }
 
 
