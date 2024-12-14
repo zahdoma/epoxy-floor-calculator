@@ -12,20 +12,20 @@ const flakeInputSection = document.getElementById('flakeInputSection');
 const floorTypeSelect = document.getElementById('floorType');
 
 document.getElementById('numCoats').addEventListener('input', function () {
-    // Set the number of coats to 1 if less than 1 is entered
-    const numCoats = Math.max(1, parseInt(this.value) || 1);
-    this.value = numCoats; // Ensure the input field stays at least 1
+    const numCoats = Math.max(0, parseInt(this.value) || 0); // Allow 0 coats
+    this.value = numCoats;
 
-    // Clear previous selections
-    squeegeeInputs.innerHTML = ''; 
+    squeegeeInputs.innerHTML = ''; // Clear previous inputs
 
-    // Always add at least one squeegee type input
-    for (let i = 1; i <= numCoats; i++) {
-        squeegeeInputs.innerHTML += `
-            <select id="coat${i}" class="calculator-select" required>
-                ${Object.keys(squeegeeTypes).map(type => `<option value="${type}">${type}</option>`).join('')}
-            </select>
-        `;
+    if (numCoats > 0) {
+        // Add squeegee type inputs if numCoats > 0
+        for (let i = 1; i <= numCoats; i++) {
+            squeegeeInputs.innerHTML += `
+                <select id="coat${i}" class="calculator-select" required>
+                    ${Object.keys(squeegeeTypes).map(type => `<option value="${type}">${type}</option>`).join('')}
+                </select>
+            `;
+        }
     }
 });
 
@@ -50,13 +50,14 @@ floorTypeSelect.addEventListener('change', function() {
     }
 });
 
+// Adjust calculate button logic
 calculateBtn.addEventListener('click', () => {
     const floorSize = parseFloat(document.getElementById('floorSize').value);
     const numCoats = parseInt(document.getElementById('numCoats').value);
     const floorType = document.getElementById('floorType').value;
     const flakeCoverage = parseFloat(document.getElementById('flakeCoverage').value);
 
-    if (!floorSize || floorSize <= 0 || !numCoats || numCoats <= 0 || !floorType || (floorType === "flake" && flakeCoverage <= 0)) {
+    if (!floorSize || floorSize <= 0 || numCoats < 0 || !floorType || (floorType === "flake" && flakeCoverage <= 0)) {
         alert('Please fill in all required fields with valid values.');
         return;
     }
@@ -64,11 +65,13 @@ calculateBtn.addEventListener('click', () => {
     let totalMinEpoxy = 0;
     let totalMaxEpoxy = 0;
 
-    for (let i = 1; i <= numCoats; i++) {
-        const squeegeeType = document.getElementById(`coat${i}`).value;
-        const [minCoverage, maxCoverage] = squeegeeTypes[squeegeeType];
-        totalMinEpoxy += floorSize / maxCoverage;
-        totalMaxEpoxy += floorSize / minCoverage;
+    if (numCoats > 0) {
+        for (let i = 1; i <= numCoats; i++) {
+            const squeegeeType = document.getElementById(`coat${i}`).value;
+            const [minCoverage, maxCoverage] = squeegeeTypes[squeegeeType];
+            totalMinEpoxy += floorSize / maxCoverage;
+            totalMaxEpoxy += floorSize / minCoverage;
+        }
     }
 
     const epoxyGallonsMin = totalMinEpoxy.toFixed(2);
@@ -84,7 +87,9 @@ calculateBtn.addEventListener('click', () => {
 
     results.innerHTML = `
         <p><strong>Results:</strong></p>
-        <p>Total Epoxy: ${epoxyGallonsMin} - ${epoxyGallonsMax} gallons (${epoxyLitresMin} - ${epoxyLitresMax} litres)</p>
+        ${numCoats > 0 ? `
+            <p>Total Epoxy: ${epoxyGallonsMin} - ${epoxyGallonsMax} gallons (${epoxyLitresMin} - ${epoxyLitresMax} litres)</p>
+        ` : '<p>No epoxy required for 0 coats.</p>'}
         ${flakeBoxes > 0 ? `<p>Total Flake: ${flakeBoxes} Boxes (40lb each)</p>` : ''}
     `;
 });
