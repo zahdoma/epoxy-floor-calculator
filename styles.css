@@ -25,12 +25,14 @@ body {
     align-items: center;
     justify-content: center;
     margin-bottom: 10px;
-    max-width: 400px;
 }
 
 .logo {
     max-width: 400px;
+    height: auto;
+    width: 100%;
 }
+
 
 /* Main Calculator Box */
 .calculator-container {
