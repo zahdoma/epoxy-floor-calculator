@@ -23,7 +23,6 @@ document.getElementById('numCoats').addEventListener('input', function () {
     // Always add at least one squeegee type input
     for (let i = 1; i <= numCoats; i++) {
         squeegeeInputs.innerHTML += `
-            <label for="coat${i}">Squeegee Type for Coat ${i}:</label>
             <select id="coat${i}" class="calculator-select" required>
                 ${Object.keys(squeegeeTypes).map(type => `<option value="${type}">${type}</option>`).join('')}
             </select>
@@ -36,7 +35,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const numCoats = 1;  // Default to 1 coat
     for (let i = 1; i <= numCoats; i++) {
         squeegeeInputs.innerHTML += `
-            <label for="coat${i}">Squeegee Type for Coat ${i}:</label>
             <select id="coat${i}" class="calculator-select" required>
                 ${Object.keys(squeegeeTypes).map(type => `<option value="${type}">${type}</option>`).join('')}
             </select>

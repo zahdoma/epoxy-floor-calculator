@@ -10,7 +10,9 @@
 
 <body>
     <div class="calculator-container">
+
         <h1 class="calculator-title">Epoxy Floor Calculator</h1>
+        
         <form id="epoxyCalculator" class="calculator-form">
             <label for="floorSize" class="calculator-label">Floor Size (sq ft):</label>
             <input type="number" id="floorSize" class="calculator-input" min="1" placeholder="Enter floor size..." required title="Enter the total floor area in square feet.">
@@ -28,7 +30,7 @@
 
             <div id="flakeInputSection" style="display: none;">
                 <label for="flakeCoverage" class="calculator-label">Flake Coverage (lbs per sq ft):</label>
-                <input type="number" id="flakeCoverage" class="calculator-input" step="0.01" min="0" value="0.16" placeholder="Enter flake coverage" title="Enter the coverage amount for flakes per square foot.">
+                <input type="number" id="flakeCoverage" class="calculator-input" step="0.01" min="0" value="0.2" placeholder="Enter flake coverage" title="Enter the coverage amount for flakes per square foot.">
             </div>
 
             <button type="button" id="calculateBtn" class="calculator-button">Calculate</button>
